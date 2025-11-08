@@ -23,6 +23,8 @@ func main() {
 
 	router := gin.Default()
 
+	router.POST("/register", handlers.Register)
+	router.POST("/login", handlers.Login)
 	router.POST("/tweets", handlers.CreateTweet)
 	router.GET("/tweets", handlers.GetTweets)
 
