@@ -4,6 +4,7 @@ import (
 	"log"
 	"twitter/database"
 	"twitter/handlers"
+	"twitter/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,10 +24,18 @@ func main() {
 
 	router := gin.Default()
 
-	router.POST("/register", handlers.Register)
-	router.POST("/login", handlers.Login)
-	router.POST("/tweets", handlers.CreateTweet)
-	router.GET("/tweets", handlers.GetTweets)
+	routes := router.Group("/")
+	{
+		routes.POST("/register", handlers.Register)
+		routes.POST("/login", handlers.Login)
+
+		routesProtected := routes.Group("/")
+		routesProtected.Use(middleware.AuthMiddleware())
+		{
+			routesProtected.POST("/tweets", handlers.CreateTweet)
+			routesProtected.GET("/tweets", handlers.GetTweets)
+		}
+	}
 
 	router.Run()
 }
